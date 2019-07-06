@@ -58,7 +58,7 @@ def print_list(list):
 
 
 # depth first search-no recursive
-def dfs(graph, start_node):
+def dfs(graph, start_node, end_node):
     visited = []
     children = find_node(start_node, graph)
     next_node = start_node
@@ -68,6 +68,9 @@ def dfs(graph, start_node):
         next_node = children[0]
         visited.append(next_node)
         children = find_unvisited(next_node, graph, visited)
+
+    if next_node == end_node:
+        print("Goal node found")
 
     return visited
 
@@ -87,6 +90,7 @@ print("Start node: " + start_node + "\nEnd node: " + end_node)
 graph.pop(0)
 
 
-print(dfs(graph, start_node))
+print("Depth first search:")
+print(dfs(graph, start_node, end_node))
 
 graph_file.close()
