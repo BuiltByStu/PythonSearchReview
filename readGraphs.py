@@ -35,10 +35,21 @@ def get_file():
 
 
 def find_node(node, graph):
+    children = []
     for edge in graph:
         for i in range(0, 2):
             if edge[i] == node:
-                print(edge[abs(i-1)]) #This node is connected to the node being searched for
+                children.append(edge[abs(i-1)])
+    return children
+
+
+def find_unvisited(node, graph, visited):
+    children = []
+    for edge in graph:
+        for i in range(0, 2):
+            if edge[i] == node and edge[abs(i-1)] not in visited:
+                children.append(edge[abs(i-1)])
+    return children
 
 
 def print_list(list):
@@ -46,11 +57,22 @@ def print_list(list):
         print(line)
 
 
-start_node = []
-end_node = []
+# depth first search-no recursive
+def dfs(graph, start_node):
+    visited = []
+    children = find_node(start_node, graph)
+    next_node = start_node
+    visited.append(start_node)
+
+    while next_node != end_node and children:
+        next_node = children[0]
+        visited.append(next_node)
+        children = find_unvisited(next_node, graph, visited)
+
+    return visited
+
 
 file_path = get_file()
-
 
 graph_file = open(file_path, "r")
 print("File readable: " + str(graph_file.readable()))
@@ -64,6 +86,7 @@ end_node = graph[0][1]
 print("Start node: " + start_node + "\nEnd node: " + end_node)
 graph.pop(0)
 
-find_node(start_node, graph)
+
+print(dfs(graph, start_node))
 
 graph_file.close()
