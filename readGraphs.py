@@ -40,6 +40,7 @@ def find_node(node, graph):
         for i in range(0, 2):
             if edge[i] == node:
                 children.append(edge[abs(i-1)])
+    children.sort()
     return children
 
 
@@ -49,6 +50,7 @@ def find_unvisited(node, graph, visited):
         for i in range(0, 2):
             if edge[i] == node and edge[abs(i-1)] not in visited:
                 children.append(edge[abs(i-1)])
+    children.sort()
     return children
 
 
@@ -56,7 +58,7 @@ def print_list(list):
     for line in list:
         print(line)
 
-
+'''
 # depth first search-no recursive
 def dfs(graph, start_node, end_node):
     visited = []
@@ -73,6 +75,58 @@ def dfs(graph, start_node, end_node):
         print("Goal node found")
 
     return visited
+'''
+
+# depth first search recursive
+def dfs(graph, start_node, end_node):
+    visited = []
+    path = []
+    children = find_node(start_node, graph)
+    next_node = start_node
+    path.append(start_node)
+    visited.append(start_node)
+
+    while next_node != end_node and children:
+        next_node = children[0]
+        path.append(next_node)
+        visited.append(next_node)
+        children = find_unvisited(next_node, graph, visited)
+        if not children and path[-1] != start_node and next_node != end_node:
+            path.pop()
+            children = find_unvisited(path[-1], graph, visited)
+
+    if next_node == end_node:
+        print("Goal path found")
+    else:
+        print("Goal path not found")
+
+    return visited
+
+def bfs(graph, start_node, end_node):
+    goal_found = False
+    next_node = start_node
+    visited = [start_node]
+    to_search = [start_node]
+    temp = []
+    children = []
+    next_depth = []
+
+    while not goal_found and to_search:
+        print("gets here")
+        for node in to_search:
+            temp = find_unvisited(node, graph, visited)
+            children.extend(temp)
+            visited.extend(temp)
+            next_depth.extend(temp)
+        to_search = next_depth.copy()
+        print(to_search)
+        next_depth.clear()
+        print(to_search)
+        if end_node in visited:
+            goal_found = True
+            print("Goal found")
+    print(visited)
+
 
 
 file_path = get_file()
@@ -89,8 +143,12 @@ end_node = graph[0][1]
 print("Start node: " + start_node + "\nEnd node: " + end_node)
 graph.pop(0)
 
-
+'''
 print("Depth first search:")
 print(dfs(graph, start_node, end_node))
+'''
+
+print("Breadth first search")
+bfs(graph, start_node, end_node)
 
 graph_file.close()
