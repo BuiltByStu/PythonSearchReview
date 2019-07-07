@@ -1,6 +1,15 @@
 import os
 import csv
 
+class Node:
+    def __init__(self, node, parent, depth):
+        self.node = node
+        self.parent = parent
+        self.depth = depth
+
+    def __str__(self):
+        return "{0}\t{1}\t{2}".format(self.node, self.parent, self.depth)
+
 
 def get_file():
     menu_select = int(input("Select graph file:\n(1) File from graph folder\n(2) Enter file path\n"))
@@ -54,6 +63,27 @@ def find_unvisited(node, graph, visited):
     return children
 
 
+def find_node_obj(node, graph, depth, visited):
+    children = []
+
+    for edge in graph:
+        for i in range(0, 2):
+            if edge[i] == node and edge[abs(i-1)] not in visited:
+                children.append(Node(edge[abs(i-1)], node, depth))
+    children.sort(key=lambda x: x.node)
+    return children
+
+
+def find_unvisited_parent(node, graph, visited):
+    children = []
+    for edge in graph:
+        for i in range(0, 2):
+            if edge[i] == node and edge[abs(i-1)] not in visited:
+                children.append((node , edge[abs(i-1)]))
+    children.sort()
+    return children
+
+
 def print_list(list):
     for line in list:
         print(line)
@@ -102,6 +132,7 @@ def dfs(graph, start_node, end_node):
 
     return visited
 
+
 def bfs(graph, start_node, end_node):
     goal_found = False
     next_node = start_node
@@ -128,6 +159,16 @@ def bfs(graph, start_node, end_node):
     print(visited)
 
 
+# Iterative deepening search
+def ids(graph, start_node, end_node):
+    visited = [start_node]
+    path = [Node(start_node, None, 0)]
+
+    path.extend(find_node_obj(start_node, graph, 1, visited))
+
+    for vis_node in path:
+        print(vis_node)
+
 
 file_path = get_file()
 
@@ -147,8 +188,12 @@ graph.pop(0)
 print("Depth first search:")
 print(dfs(graph, start_node, end_node))
 '''
-
+'''
 print("Breadth first search")
 bfs(graph, start_node, end_node)
+'''
+
+print("Iterative deepening search:")
+ids(graph, start_node, end_node)
 
 graph_file.close()
