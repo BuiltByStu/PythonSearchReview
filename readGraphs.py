@@ -1,6 +1,7 @@
 import os
 import csv
 
+
 class Node:
     def __init__(self, node, parent, depth):
         self.node = node
@@ -63,14 +64,16 @@ def find_unvisited(node, graph, visited):
     return children
 
 
-def find_node_obj(node, graph, depth, visited):
+def find_node_obj(node, graph, visited):
     children = []
+    depth = node.depth + 1
 
     for edge in graph:
         for i in range(0, 2):
-            if edge[i] == node and edge[abs(i-1)] not in visited:
-                children.append(Node(edge[abs(i-1)], node, depth))
+            if edge[i] == node.node and edge[abs(i-1)] not in visited:
+                children.append(Node(edge[abs(i-1)], node.node, depth))
     children.sort(key=lambda x: x.node)
+
     return children
 
 
@@ -162,10 +165,21 @@ def bfs(graph, start_node, end_node):
 # Iterative deepening search
 def ids(graph, start_node, end_node):
     visited = [start_node]
-    path = [Node(start_node, None, 0)]
+    depth = 0
+    next_node = Node(start_node, None, depth)
+    path = [next_node]
+    children = find_node_obj(next_node, graph, visited)
 
-    path.extend(find_node_obj(start_node, graph, 1, visited))
+    while next_node != end_node and children:
+        next_node = children[0]
+        path.append(children[0])
+        visited.append(path[-1].node)
+        children = find_node_obj(next_node, graph, visited)
 
+    if next_node == end_node:
+        print("Goal path found")
+    else:
+        print("Goal path not found")
     for vis_node in path:
         print(vis_node)
 
